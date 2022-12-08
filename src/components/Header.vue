@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>MOVIES</h1>
+    <a href="/"><img class="titleBanner" src="../assets/banner.png" /></a>
   </div>
 </template>
 
@@ -10,7 +10,12 @@ export default {
 };
 </script>
 <style scoped>
-h1 {
+a {
   color: antiquewhite;
+  text-decoration: none;
+  font-size: xx-large;
+}
+.titleBanner {
+  height: 150px;
 }
 </style>

@@ -1,17 +1,20 @@
 <template>
   <Header />
   <MovieCont />
+  <Footer />
 </template>
 
 <script>
 import Header from './components/Header.vue';
 import MovieCont from './components/MovieCont.vue';
+import Footer from './components/Footer.vue';
 
 export default {
   name: 'App',
   components: {
     Header,
     MovieCont,
+    Footer,
   },
 };
 </script>
