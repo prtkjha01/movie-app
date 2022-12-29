@@ -2,7 +2,7 @@
   <div class="end">
     <footer>
       <p class="footer-text">© Prateek Jha 2022</p>
-      <a class="footer-text" href="https://github.com/prtkjha01">Github</a>
+      <a class="footer-text" target="_blank" href="https://github.com/prtkjha01">Github</a>
     </footer>
   </div>
 </template>

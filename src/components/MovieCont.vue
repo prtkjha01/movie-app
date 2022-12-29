@@ -1,46 +1,75 @@
 <template>
-  <div class="filterButton container">
-    <form class="d-flex mx-2 searchBar rounded" role="search">
-      <input
-        class="form-control me-2"
-        :value="searchQuery"
-        @keyup="(e) => getSearchQuery(e, e.target.value)"
-        type="text"
-        placeholder="Search"
-        aria-label="Search"
-      />
-      <button class="btn" type="button" @click="searchMovie(movieData, searchQuery)">
-        <img src="../assets/search.png" class="searchButton" />
-      </button>
-    </form>
-    <div class="btn-group" role="group">
-      <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        Filter By
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" @click="filterByImdb(movieData, 7.5)" href="#">Imdb</a></li>
-        <li><a class="dropdown-item" @click="filterByGenre(movieData, 80)" href="#">genre</a></li>
-      </ul>
+  <div class="container">
+    <div class="row">
+      <div class="my-1 col-lg-8">
+        <form class="d-flex searchBar rounded" role="search">
+          <input
+            class="form-control me-2"
+            :value="searchQuery"
+            @keyup="(e) => getSearchQuery(e, e.target.value)"
+            type="text"
+            placeholder="Search"
+            aria-label="Search"
+          />
+          <button class="btn" type="button" @click="searchMovie(getMovies, searchQuery)">
+            <img src="../assets/search.png" class="searchButton" />
+          </button>
+        </form>
+      </div>
+
+      <div class="filterButton my-1 col-lg-2 col-md-6 col-sm-6 col-6">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Filter By Genre
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" @click="filterByGenre(28)" href="#">28</a>
+              <a class="dropdown-item" @click="filterByGenre(80)" href="#">80</a>
+              <a class="dropdown-item" @click="filterByGenre(14)" href="#">14</a>
+              <a class="dropdown-item" @click="filterByGenre(53)" href="#">53</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="filterButton my-1 col-lg-2 col-md-6 col-sm-6 col-6">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Filter By Imdb
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" @click="filterByImdb(6)" href="#">6</a>
+              <a class="dropdown-item" @click="filterByImdb(7)" href="#">7</a>
+              <a class="dropdown-item" @click="filterByImdb(8)" href="#">8</a>
+              <a class="dropdown-item" @click="filterByImdb(9)" href="#">9</a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="MoviesContainer container">
-    <div class="row">
+    <div class="row" v-if="getMovies.length > 0">
       <Movie
-        class="col-lg-3 col-md-4 col-sm-6"
-        v-for="movie in movies"
+        class="col-lg-2 col-md-4 col-sm-6"
+        v-for="movie in watch"
         :key="movie.id"
-        :status="{ value: false }"
+        :status="{ value: true }"
         :data="movie"
         :index="movie"
       />
     </div>
   </div>
+  <button class="btn btn-outline-danger mx-2 my-1" @click="handlePageUpdate(-1)">Prev</button>
+  <button class="btn btn-outline-danger mx-2 my-1" @click="handlePageUpdate(1)">Next</button>
 </template>
 
 <script>
 import Movie from './Movie.vue';
-import axios from 'axios';
+import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'MovieCont',
   components: {
@@ -51,34 +80,69 @@ export default {
     return {
       movies: [],
       movieData: [],
-      num: 10,
       searchQuery: '',
     };
   },
-  async mounted() {
-    axios.get('https://api.themoviedb.org/3/movie/popular?api_key=4bcb539f5521b73828aa4c05d8e2a421').then((data) => {
-      this.movieData = data.data.results;
-      this.movies = this.movieData;
-    });
+  mounted() {
+    if (this.getMovies.length === 0) {
+      this.getAllData();
+    }
+  },
+
+  methods: {
+    ...mapActions({
+      getApiData: 'getApiData',
+    }),
+    getAllData() {
+      this.getApiData()
+        .then((res) => {
+          console.log('res', res);
+          // this.movies = this.getMovies;
+          console.log('res-2', this.movies.length, this.getMovies.length);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
   computed: {
-    filterByImdb() {
-      return (value, filterParam) => {
-        let filteredMovies = [];
-        for (var i = 0; i < value.length; i++) {
-          if (value[i].vote_average > filterParam) filteredMovies.push(value[i]);
+    ...mapGetters({
+      getMovies: 'getMovies',
+    }),
+    watch() {
+      if (this.movies.length > 0) {
+        return this.movies;
+      } else {
+        return this.getMovies;
+      }
+    },
+    handlePageUpdate() {
+      return (param) => {
+        //console.log(this.$store.state.page, param);
+        if (this.$store.state.page <= 0) this.$store.state.page = 1;
+        else {
+          this.$store.state.page += param;
+          this.getAllData();
         }
-        console.log(this.movies);
+      };
+    },
+    filterByImdb() {
+      return (filterParam) => {
+        let filteredMovies = [];
+        for (var i = 0; i < this.getMovies.length; i++) {
+          if (this.getMovies[i].vote_average > filterParam) filteredMovies.push(this.getMovies[i]);
+        }
+        //console.log(this.movies);
 
         this.movies = filteredMovies;
-        this.tempMovies = this.movies;
+        // this.tempMovies = this.movies;
       };
     },
     filterByGenre() {
-      return (value, filterParam) => {
+      return (filterParam) => {
         let filteredMovies = [];
-        for (var i = 0; i < value.length; i++) {
-          if (value[i].genre_ids[0] === filterParam) filteredMovies.push(value[i]);
+        for (var i = 0; i < this.getMovies.length; i++) {
+          if (this.getMovies[i].genre_ids[0] === filterParam) filteredMovies.push(this.getMovies[i]);
         }
 
         this.movies = filteredMovies;
@@ -86,22 +150,20 @@ export default {
     },
     getSearchQuery() {
       return (key, query) => {
-        console.log(query);
         this.searchQuery = query;
 
-        this.searchMovie(key, this.movieData, query);
+        this.searchMovie(key, this.getMovies, query);
       };
     },
     searchMovie() {
       return (key, data, query) => {
-        console.log(key);
-        console.log('searchQuery() triggered with ', data, query);
+        //console.log('searchQuery() triggered with ', data, query);
         let searchedMovie = [];
         query = query.toLowerCase();
         if (key.keyCode === 8) {
           for (var i = 0; i < data.length; i++) {
             if (data[i].original_title.toLowerCase().includes(query)) {
-              console.log('backSpace Pressed');
+              //console.log('backSpace Pressed');
               searchedMovie.push(data[i]);
               this.movies = searchedMovie;
             }
@@ -109,29 +171,27 @@ export default {
         } else {
           for (var i = 0; i < data.length; i++) {
             if (data[i].original_title.toLowerCase().includes(query)) {
-              console.log('matched');
+              //console.log('matched');
               searchedMovie.push(data[i]);
               this.movies = searchedMovie;
             }
           }
         }
-
-        console.log(searchedMovie);
       };
     },
   },
 };
 </script>
 <style scoped>
-.filterButton {
-  display: flex;
-  justify-content: end;
-}
 .searchBar {
   background-color: #fff;
 }
 .searchButton {
   height: 16px;
   width: 16px;
+}
+.filterButton {
+  display: flex;
+  justify-content: end;
 }
 </style>
