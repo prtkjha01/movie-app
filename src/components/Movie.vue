@@ -12,16 +12,16 @@
           <div class="text">Release Date : {{ data.release_date }}</div>
           <div class="text">Imdb : {{ data.vote_average }}</div>
           <div class="text">
-            <div class="bg-danger rounded">{{ status.value === false ? 'not watched' : 'watched' }}</div>
+            <div class="bg-danger rounded">{{ status.value === false ? 'not watched' : 'watch now' }}</div>
           </div>
           <!-- </ul> -->
         </div>
       </div>
 
-      <div class="card-body ottIcons">
+      <!-- <div class="card-body ottIcons">
         <a href="#" class="card-link"><img src="../assets/netflix.png" height="36px" width="36px" /></a>
         <a href="#" class="card-link"><img src="../assets/prime.png" height="40px" width="40px" /></a>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

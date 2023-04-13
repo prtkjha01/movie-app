@@ -20,7 +20,7 @@
       <div class="filterButton my-1 col-lg-2 col-md-6 col-sm-6 col-6">
         <div class="btn-group" role="group">
           <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Filter By Genre
+            Filter By Genre Code
           </button>
           <ul class="dropdown-menu">
             <li>
