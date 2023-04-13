@@ -60,8 +60,8 @@ ul:hover {
 }
 .card:hover {
   background-color: #808080 !important;
+  scale: 1.1;
   z-index: 1;
-  width: 300px;
 }
 .card-body:hover {
   background-color: #808080 !important;

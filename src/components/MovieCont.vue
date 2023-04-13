@@ -54,7 +54,7 @@
   <div class="MoviesContainer container">
     <div class="row" v-if="getMovies.length > 0">
       <Movie
-        class="col-lg-2 col-md-4 col-sm-6"
+        class="col-lg-3 col-md-4 col-sm-6"
         v-for="movie in watch"
         :key="movie.id"
         :status="{ value: true }"
