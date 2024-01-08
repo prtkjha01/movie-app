@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="my-1 col-lg-8">
+      <div class="my-1 col-lg-10 col-md-9 col-sm-8 col-7">
         <form class="d-flex searchBar rounded" role="search">
           <input
             class="form-control me-2"
@@ -11,31 +11,24 @@
             placeholder="Search"
             aria-label="Search"
           />
-          <button class="btn" type="button" @click="searchMovie(getMovies, searchQuery)">
+          <button
+            class="btn"
+            type="button"
+            @click="searchMovie(getMovies, searchQuery)"
+          >
             <img src="../assets/search.png" class="searchButton" />
           </button>
         </form>
       </div>
 
-      <div class="filterButton my-1 col-lg-2 col-md-6 col-sm-6 col-6">
+      <div class="filterButton my-1 col-lg-2 col-md-3 col-sm-4 col-5">
         <div class="btn-group" role="group">
-          <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Filter By Genre Code
-          </button>
-          <ul class="dropdown-menu">
-            <li>
-              <a class="dropdown-item" @click="filterByGenre(28)" href="#">28</a>
-              <a class="dropdown-item" @click="filterByGenre(80)" href="#">80</a>
-              <a class="dropdown-item" @click="filterByGenre(14)" href="#">14</a>
-              <a class="dropdown-item" @click="filterByGenre(53)" href="#">53</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="filterButton my-1 col-lg-2 col-md-6 col-sm-6 col-6">
-        <div class="btn-group" role="group">
-          <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          <button
+            type="button"
+            class="btn btn-danger filter-button dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
             Filter By Imdb
           </button>
           <ul class="dropdown-menu">
@@ -52,7 +45,7 @@
   </div>
 
   <div class="MoviesContainer container">
-    <div class="row" v-if="getMovies.length > 0">
+    <div class="row" v-if="!loading">
       <Movie
         class="col-lg-3 col-md-4 col-sm-6"
         v-for="movie in watch"
@@ -62,16 +55,26 @@
         :index="movie"
       />
     </div>
+    <div v-else style="color: #fff; height: 100px; margin-top: 100px">
+      Loading...
+    </div>
   </div>
-  <button class="btn btn-outline-danger mx-2 my-1" @click="handlePageUpdate(-1)">Prev</button>
-  <button class="btn btn-outline-danger mx-2 my-1" @click="handlePageUpdate(1)">Next</button>
+  <button
+    class="btn btn-outline-danger mx-2 my-1"
+    @click="handlePageUpdate(-1)"
+  >
+    Prev
+  </button>
+  <button class="btn btn-outline-danger mx-2 my-1" @click="handlePageUpdate(1)">
+    Next
+  </button>
 </template>
 
 <script>
-import Movie from './Movie.vue';
-import { mapActions, mapGetters } from 'vuex';
+import Movie from "./Movie.vue";
+import { mapActions, mapGetters } from "vuex";
 export default {
-  name: 'MovieCont',
+  name: "MovieCont",
   components: {
     Movie,
   },
@@ -80,7 +83,8 @@ export default {
     return {
       movies: [],
       movieData: [],
-      searchQuery: '',
+      searchQuery: "",
+      loading: false,
     };
   },
   mounted() {
@@ -91,23 +95,22 @@ export default {
 
   methods: {
     ...mapActions({
-      getApiData: 'getApiData',
+      getApiData: "getApiData",
     }),
     getAllData() {
+      this.loading = true;
       this.getApiData()
         .then((res) => {
-          console.log('res', res);
-          // this.movies = this.getMovies;
-          console.log('res-2', this.movies.length, this.getMovies.length);
+          this.loading = false;
         })
         .catch((err) => {
-          console.log(err);
+          this.loading = false;
         });
     },
   },
   computed: {
     ...mapGetters({
-      getMovies: 'getMovies',
+      getMovies: "getMovies",
     }),
     watch() {
       if (this.movies.length > 0) {
@@ -130,7 +133,8 @@ export default {
       return (filterParam) => {
         let filteredMovies = [];
         for (var i = 0; i < this.getMovies.length; i++) {
-          if (this.getMovies[i].vote_average > filterParam) filteredMovies.push(this.getMovies[i]);
+          if (this.getMovies[i].vote_average > filterParam)
+            filteredMovies.push(this.getMovies[i]);
         }
         //console.log(this.movies);
 
@@ -142,7 +146,8 @@ export default {
       return (filterParam) => {
         let filteredMovies = [];
         for (var i = 0; i < this.getMovies.length; i++) {
-          if (this.getMovies[i].genre_ids[0] === filterParam) filteredMovies.push(this.getMovies[i]);
+          if (this.getMovies[i].genre_ids[0] === filterParam)
+            filteredMovies.push(this.getMovies[i]);
         }
 
         this.movies = filteredMovies;
